@@ -24,6 +24,15 @@ const consultBtn = document.getElementById("consultBtn");
 // Metode pembayaran
 const paymentItems = document.querySelectorAll(".payment-item");
 
+// Input akun
+const robloxUsernameInput = document.getElementById("robloxUsername");
+const robloxPasswordInput = document.getElementById("robloxPassword");
+const gmailInput = document.getElementById("gmailUser");
+const gmailPasswordInput = document.getElementById("gmailPassword");
+
+// Anti Gmail button (AMAN kalau belum ada)
+const antiGmailBtn = document.getElementById("antiGmailBtn");
+
 /* =========================
    DEFAULT STATE
 ========================= */
@@ -33,6 +42,7 @@ totalPriceEl.innerText = "Rp 0";
 
 let selectedProduct = null;
 let selectedPayment = null;
+let antiGmailActive = false;
 
 /* =========================
    HELPER
@@ -84,7 +94,6 @@ priceItems.forEach(item => {
     totalPriceEl.innerText = priceText;
     selectedProduct = productName;
 
-    // tombol ❌ cancel
     const cancelBtn = document.createElement("span");
     cancelBtn.className = "cancel-btn";
     cancelBtn.innerText = "✕";
@@ -123,6 +132,31 @@ paymentItems.forEach(item => {
 });
 
 /* =========================
+   ANTI GMAIL TOGGLE
+========================= */
+if (antiGmailBtn) {
+  antiGmailBtn.addEventListener("click", () => {
+    antiGmailActive = !antiGmailActive;
+
+    if (antiGmailActive) {
+      antiGmailBtn.classList.add("active");
+      antiGmailBtn.innerText = "ANTI GMAIL AKTIF";
+
+      gmailInput.value = "";
+      gmailPasswordInput.value = "";
+      gmailInput.disabled = true;
+      gmailPasswordInput.disabled = true;
+    } else {
+      antiGmailBtn.classList.remove("active");
+      antiGmailBtn.innerText = "ANTI GMAIL";
+
+      gmailInput.disabled = false;
+      gmailPasswordInput.disabled = false;
+    }
+  });
+}
+
+/* =========================
    BAYAR SEKARANG → WHATSAPP
 ========================= */
 payNowBtn.addEventListener("click", () => {
@@ -136,24 +170,40 @@ payNowBtn.addEventListener("click", () => {
     return;
   }
 
-  // Ambil input akun
-  const robloxUsername = document.getElementById("robloxUsername")?.value.trim();
-  const robloxPassword = document.getElementById("robloxPassword")?.value.trim();
-  const gmailUser = document.getElementById("gmailUser")?.value.trim();
-  const gmailPassword = document.getElementById("gmailPassword")?.value.trim();
+  const robloxUsername = robloxUsernameInput.value.trim();
+  const robloxPassword = robloxPasswordInput.value.trim();
 
-  if (!robloxUsername || !robloxPassword || !gmailUser || !gmailPassword) {
-    alert("Username & Password Roblox serta Gmail wajib diisi");
+  if (!robloxUsername || !robloxPassword) {
+    alert("Username & Password Roblox wajib diisi");
     return;
   }
 
-  const totalHarga = totalPriceEl.innerText;
+  let gmailFinal = "";
+  let gmailPassFinal = "";
+
+  if (antiGmailActive) {
+    gmailFinal = "Anti Gmail";
+    gmailPassFinal = "Anti Password";
+  } else {
+    const gmail = gmailInput.value.trim();
+    const gmailPass = gmailPasswordInput.value.trim();
+
+    if (!gmail || !gmailPass) {
+      alert("isi dulu gmail, jika anda tidak puya gmaail silahkan click untuk tidak menggunakan gmail terimakasih");
+      return;
+    }
+
+    gmailFinal = gmail;
+    gmailPassFinal = gmailPass;
+  }
+
   const nomorWA = "6281809730331";
+  const totalHarga = totalPriceEl.innerText;
 
   const pesan =
 `Halo kak 👋
 
-Saya ingin melakukan pemesanan dengan detail berikut:
+Saya ingin melakukan pemesanan:
 
 📦 Produk :
 ${selectedProduct}
@@ -168,21 +218,22 @@ ${robloxUsername}
 ${robloxPassword}
 
 📧 Gmail :
-${gmailUser}
+${gmailFinal}
 
 🔑 Password Gmail :
-${gmailPassword}
+${gmailPassFinal}
 
-💰 Total Pembayaran :
+💰 Total :
 ${totalHarga}
 
 Mohon diproses ya kak 🙏
 Terima kasih.`;
 
-  const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
-  window.open(urlWA, "_blank");
+  window.open(
+    `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`,
+    "_blank"
+  );
 });
-
 
 /* =========================
    KONSULTASI → WHATSAPP
@@ -191,6 +242,8 @@ consultBtn.addEventListener("click", () => {
   const nomorWA = "6281809730331";
   const pesan = "kak saya ingin konsultasi";
 
-  const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
-  window.open(urlWA, "_blank");
+  window.open(
+    `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`,
+    "_blank"
+  );
 });
