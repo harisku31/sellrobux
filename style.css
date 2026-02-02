@@ -338,3 +338,31 @@ body {
   border-radius: 8px;
   padding: 4px;
 }
+
+/* =========================
+   ANTI GMAIL BUTTON
+========================= */
+.anti-gmail-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: 2px dashed #ff9800;
+  background: #fff3e0;
+  color: #ff9800;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.anti-gmail-btn.active {
+  background: #ff9800;
+  color: #ffffff;
+  border-style: solid;
+}
+
+/* Gmail disabled */
+.account-section input:disabled {
+  background: #eeeeee;
+  color: #999;
+}
